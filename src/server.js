@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
+// 
 mongoose.connect("mongodb://127.0.0.1:27017/ES6");
 const db = mongoose.connection;
 
@@ -28,7 +29,7 @@ userSchema.pre("save", async function () {
 });
 
 //Creating a model
-const User = mongoose.model("users", userSchema);
+const User = mongoose.model("User", userSchema);
 
 const app = express();
 // template engine으로 pug를 사용할 것을 명시함.
@@ -51,6 +52,7 @@ app.route("/").get(
         }
         // username과 email이 존재할 경우 errorMessage를 송출.
         const exists = await User.exists({ $or: [{ username }, { email }] });
+        console.log(exists)
         if (exists) {
           return res.status(400).render("join", {
             errorMessage: "This username/email is already taken.",
