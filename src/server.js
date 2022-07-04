@@ -1,9 +1,11 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-
+import session from "express-session";
+import MongoStore from "connect-mongo";
 // 
-mongoose.connect("mongodb://127.0.0.1:27017/ES6");
+const mongoUrl = "mongodb://127.0.0.1:27017/ES6"
+mongoose.connect(mongoUrl);
 const db = mongoose.connection;
 
 const handleOpen = () => console.log("✅ Connected to DB");
@@ -16,7 +18,6 @@ db.once("open", handleOpen);
 const userSchema = new mongoose.Schema({
   avatarUrl: String,
   email: { type: String, required: true, unique: true },
-  socialOnly: { type: Boolean, default: false },
   username: { type: String, required: true, unique: true },
   password: { type: String },
   name: { type: String },
@@ -35,9 +36,16 @@ const app = express();
 // template engine으로 pug를 사용할 것을 명시함.
 app.set("view engine", "pug");
 app.set("views", process.cwd() + "/src/views");
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(
+  session({
+    secret: "정준",
+    resave: true,
+    saveUninitialized: true,
+    store: MongoStore.create({ mongoUrl: mongoUrl }),
+  })
+);
 app.route("/").get(
     (_, res)=>{
         return res.render("join")
@@ -73,6 +81,29 @@ app.route("/").get(
           }
         }
 );
+
+app.route("/login").get(
+    (_, res) => res.render("login")
+).post(async (req, res) => {
+        const { username, password } = req.body;
+        const user = await User.findOne({username});
+        if (!user) {
+          return res.status(400).render("login", {
+            errorMessage: "An account with this username does not exists.",
+          });
+        }
+        const ok = await bcrypt.compare(password, user.password);
+        if (!ok) {
+          return res.status(400).render("login", {
+            errorMessage: "Wrong password",
+          });
+        }
+        req.session.loggedIn = true;
+        req.session.user = user;
+        return res.send("you are logged in");
+      }
+)
+
 
 const handleListening = () =>
   console.log(`✅ Server listenting on http://localhost:5000 🚀`);
