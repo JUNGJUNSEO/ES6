@@ -1,9 +1,7 @@
-doctype html
-html(lang="ko")
-  head
-    link(rel="stylesheet" href="https://unpkg.com/mvp.css") 
-  body
-    
+extends base
+
+block content
+    div.title Join
     span= errorMessage
     form(method="POST")
       input(placeholder="Name", name="name", type="text", required)
@@ -12,3 +10,6 @@ html(lang="ko")
       input(placeholder="Password", name="password", type="password", required)
       input(placeholder="Confirm Password", name="password2", type="password", required)
       input(type="submit", value="Join")
+    div
+        span Already have an account? 
+        a(href="/") Log in now &rarr;
