@@ -3,8 +3,7 @@ html(lang="ko")
   head
     link(rel="stylesheet" href="https://unpkg.com/mvp.css") 
   body
-    if messages.error
-        span= messages.error
+    
     span= errorMessage
     form(method="POST")
       input(placeholder="Name", name="name", type="text", required)
