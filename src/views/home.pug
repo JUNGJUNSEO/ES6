@@ -1,0 +1,19 @@
+doctype html
+html(lang="ko")
+    head
+        link(rel="stylesheet", href="/public/css/styles.css")
+    body
+        if messages.info
+            span= messages.info
+        if loggedIn
+            span You are logged in
+            a(href="logout")  Log Out
+        else
+            span= errorMessage
+            form(method="POST")
+                input(placeholder="Username", name="username", type="text", required)
+                input(placeholder="Password", name="password", type="password", required)
+                input(type="submit", value="Login")
+            div 
+                span Don't have an account? 
+                a(href="/join") Create one now &rarr;
