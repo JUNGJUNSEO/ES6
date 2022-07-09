@@ -7,8 +7,9 @@ export const postJoin = async (req, res) => {
     const { name, username, email, password, password2} = req.body;
     // 비밀 번호가 틀렸을 경우 errorMessage를 송출.
     if (password !== password2) {
-      return res.status(400).render("join", {
-        errorMessage: "Password confirmation does not match.",
+        req.flash("error", "Password confirmation does not match.")
+        return res.status(400).render("join", {
+            errorMessage: "Password confirmation does not match.",
       });
     }
     // username과 email이 존재할 경우 errorMessage를 송출.
